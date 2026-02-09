@@ -38,7 +38,7 @@ lapply(clus_mesh3d_FAFB14_each, function(m)
 ### load synapses
 ###############################################################
 
-# download synapse table csv file from:
+# download synapse coordinates csv file from:
 #   https://codex.flywire.ai/api/download?dataset=fafb
 #   move to "synapses" folder in repository
 
@@ -59,8 +59,11 @@ inside_list <- lapply(1:4, function(i) nat::pointsinside(syn_xyz, clus_mesh3d_FA
 inside <- Reduce(`|`, inside_list)
 
 # save logical vector "inside"
-csvdir <- file.path(repodir, "synapses", "points_inside_persistent_cluster.csv")
-write.csv(data.frame(inside = inside), csvdir, row.names = FALSE)
+csvoutdir <- file.path(repodir, "synapses", "points_inside_persistent_cluster.csv")
+write.csv(data.frame(inside = inside), csvoutdir, row.names = FALSE)
+
+# load logical vector "inside" to confirm size and reability
+# inside <- read.csv(csvoutdir)
 
 ###############################################################
 # debugging: plot and overlay with brain surface
