@@ -35,7 +35,6 @@ NRRD density images (IBNWB space)
 | Script | Description |
 |--------|-------------|
 | `gen_cluster_mesh3d_and_reformat2FAFB14.R` | Generates 3D meshes from density images: applies median filtering, binarizes at 30% threshold, creates isosurfaces, removes small components, and transforms from IBNWB to FAFB14 space. Exports 4 STL files. |
-| `gen_cluster_hxsurf_and_reformat2FAFB14.R` | Alternative mesh generation producing HXSurf-format surfaces (compatible with Amira/Avizo), with decimation and Laplacian smoothing. |
 | `cluster2syn_overlap.R` | Main analysis script. Loads cluster meshes and synapse coordinates, uses `nat::pointsinside()` for point-in-polyhedron testing, and outputs a logical vector indicating which synapses are inside the persistent cluster. |
 | `display_cluster_densitites.m` | MATLAB script for 2D maximum intensity projections of cluster density images across experimental conditions. |
 
