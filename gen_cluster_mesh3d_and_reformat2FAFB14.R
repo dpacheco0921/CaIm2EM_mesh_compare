@@ -17,9 +17,11 @@ fdir <- file.path(repodir, "densitites", "density_per_cluster_IBNWB")
 fname <- "roidensity_all_07_new_exp2_clus_3.nrrd"
 
 # Load image and binarize
+# define the total number of animals contributing to this density
 total_n <- 10
 im   <- read.im3d(file.path(fdir, fname))
 vol  <- im[]
+# use the same threshold as in the original paper
 mask <- vol > total_n*.3
 mask_med <- medianblur(as.cimg(mask), n = 5)
 mask_med <- mask_med[,,,1] > 0
@@ -27,13 +29,13 @@ mask_med <- mask_med[,,,1] > 0
 # Generate raw and smoothed mesh
 clus_mesh3d_IBNWB <- vcgIsosurface(mask_med, threshold = 0, 
                       origin = c(0, 0, 0), 
-                      direction = diag(c(-1, -1, 1)), 
+                      direction = diag(c(-1, -1, 1)), # define correct direction to match IBNWB
                       spacing = voxdims(im))
 
 # prune small meshes (drop any connected piece with < facenum faces)
 clus_mesh3d_IBNWB <- vcgIsolated(
   clus_mesh3d_IBNWB,
-  facenum = 9000,
+  facenum = 9000, # cutoff defined to just get the largest 6 volumes
   silent = TRUE
 )
 
@@ -78,13 +80,14 @@ shade3d(clus_mesh3d_FAFB14[[3]], color = "red", alpha = 0.6)
 
 # save meshes
 # Note: 
-#   exclude meshes
+#   exclude meshes based on visual inspection
 #     3 (mesh by the optic lobe what has holes)
 #     4 (is the mesh mostly of somas outside neuropil)
 
 meshdir <- file.path(repodir, "meshes")
 setwd(meshdir)
 
+# define new mesh index from 1-6 to 1-4
 idx <- c(1, 2, 5, 6)
 
 for (k in seq_along(idx)) {

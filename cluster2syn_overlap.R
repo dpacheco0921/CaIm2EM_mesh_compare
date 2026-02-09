@@ -40,7 +40,8 @@ lapply(clus_mesh3d_FAFB14_each, function(m)
 
 # download synapse coordinates csv file from:
 #   https://codex.flywire.ai/api/download?dataset=fafb
-#   move to "synapses" folder in repository
+#   move to "synapses" folder in repository, and rename it to 
+#   "synapse_coordinates.csv"
 
 # load csv file with all synapses
 csvdir <- file.path(repodir, "synapses", "synapse_coordinates.csv")
@@ -55,6 +56,7 @@ syn_xyz <- transform(syn_xyz,
 syn_xyz <- syn_xyz[complete.cases(syn_xyz), ]
 
 # find synapses inside cluster meshes (run for each mesh separately and then get the union)
+#   it uses nat::pointsinside which assumes meshes must be watertight.
 inside_list <- lapply(1:4, function(i) nat::pointsinside(syn_xyz, clus_mesh3d_FAFB14_each[[i]]))
 inside <- Reduce(`|`, inside_list)
 
