@@ -1,15 +1,17 @@
 ##########################################################################
 ### Code to generate meshes of activity clusters from binary 3D arrays ###
 ##########################################################################
+#
+# Input:  NRRD density image of persistent cluster (exp2, clus_3) in IBNWB space
+# Output: 4 STL mesh files in FAFB14 space (meshes/clus_mesh3d_FAFB14_[1-4].stl)
 
 library(natverse)
 library(Rvcg)
 library(rgl)
 library(imager)
 
-# Path to your image files of cluster densities
-# Note: add the CaIm2EM_mesh_compare repository main directory
-repodir <- "add repository directory"
+# Set repository as the working directory
+repodir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(repodir)
 
 # Use image of persistent cluster when activating pC1alpha (pC1ed)
@@ -21,8 +23,9 @@ fname <- "roidensity_all_07_new_exp2_clus_3.nrrd"
 total_n <- 10
 im   <- read.im3d(file.path(fdir, fname))
 vol  <- im[]
-# use the same threshold as in the original paper
+# binarize: keep voxels active in >= 30% of animals (same threshold as original paper)
 mask <- vol > total_n*.3
+# smooth binary mask with median filter to remove isolated noisy voxels
 mask_med <- medianblur(as.cimg(mask), n = 5)
 mask_med <- mask_med[,,,1] > 0
 
@@ -39,7 +42,7 @@ clus_mesh3d_IBNWB <- vcgIsolated(
   silent = TRUE
 )
 
-# get mesh size
+# split into individual components and inspect sizes
 parts <- vcgIsolated(
   clus_mesh3d_IBNWB,
   split = TRUE,
@@ -84,6 +87,7 @@ shade3d(clus_mesh3d_FAFB14[[3]], color = "red", alpha = 0.6)
 #     3 (mesh by the optic lobe what has holes)
 #     4 (is the mesh mostly of somas outside neuropil)
 
+# vcgStlWrite requires setwd to the output directory
 meshdir <- file.path(repodir, "meshes")
 setwd(meshdir)
 

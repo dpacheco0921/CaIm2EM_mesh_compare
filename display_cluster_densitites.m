@@ -27,6 +27,7 @@ end
 % 4) plot results from activating pC1-alpha (pC1ed)
 
 figure('Position', [1 1 1800 300])
+% build colormap: white -> magenta -> cyan
 n_bis = 8;
 cmap_ = colorGradient([1 1 1], [1 0 1], ceil(n_bis/2));
 colormap2use = colorGradient([1 0 1], [0 1 1], ceil(n_bis/2));
@@ -39,6 +40,7 @@ for clus_i = 1:4
     axH(clus_i) = subplot(1, 4, clus_i);
     tempim = double(im2plot{exp_i, clus_i});
     tempim = (tempim/max_per_exp)*100;
+    % maximum intensity projection along Z, flipped for dorsal-up orientation
     imagesc(max(flip(tempim, 2), [], 3), 'Parent', axH(clus_i))
     caxis(axH(clus_i), [30 100])
     axH(clus_i).Title.String = cluster_string{clus_i};

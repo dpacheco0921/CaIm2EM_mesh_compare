@@ -27,7 +27,8 @@ NRRD density images (IBNWB space)
   (load meshes + FlyWire synapses -> point-in-mesh test)
         |
         v
-  points_inside_persistent_cluster.csv
+  points_inside_persistent_cluster_buhman.csv
+  points_inside_persistent_cluster_princeton.csv
 ```
 
 ## Scripts
@@ -58,7 +59,9 @@ NRRD files named `roidensity_all_07_new_{condition}_clus_{cluster}.nrrd`, where:
 
 ### Synapse data
 
-Synapse coordinates are downloaded from [FlyWire Codex](https://codex.flywire.ai/api/download?dataset=fafb) in FAFB14 space.
+Synapse coordinates are downloaded from [FlyWire Codex](https://codex.flywire.ai/api/download?dataset=fafb) in FAFB14 space. Two synapse tables are supported:
+- **Buhman** (`synapse_coordinates.csv`): original FlyWire synapse predictions, columns `x, y, z`
+- **Princeton** (`fafb_v783_princeton_synapse_table.csv`): FAFB v783 predictions, columns `post_x, post_y, post_z`
 
 ## Dependencies
 

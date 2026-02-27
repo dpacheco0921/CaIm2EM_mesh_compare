@@ -1,15 +1,19 @@
 ###############################################################
 ### Code to load activity cluster and check synapse overlap ###
 ###############################################################
+#
+# Input:  STL meshes of activity clusters (meshes/*.stl)
+#         Synapse coordinate CSVs (Buhman and Princeton tables)
+# Output: Logical vectors indicating which synapses fall inside
+#         the persistent cluster meshes (one CSV per synapse source)
 
 library(natverse)
 library(fafbseg)
 library(rgl)
 library(Rvcg)
 
-# Path to your image files of cluster densities
-# Note: add the CaIm2EM_mesh_compare repository main directory
-repodir <- "add repository directory"
+# Set repository as the working directory
+repodir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(repodir)
 
 ###############################################################
@@ -44,6 +48,7 @@ lapply(clus_mesh3d_FAFB14_each, function(m)
 #   "synapse_coordinates.csv"
 
 # load csv file with all synapses (Buhman synapses)
+# columns: x, y, z (original FlyWire synapse predictions)
 csvdir <- file.path(repodir, "synapses", "synapse_coordinates.csv")
 synapses_xyz <- read.csv(csvdir)
 
@@ -64,10 +69,11 @@ inside <- Reduce(`|`, inside_list)
 csvoutdir <- file.path(repodir, "synapses", "points_inside_persistent_cluster_buhman.csv")
 write.csv(data.frame(inside = inside), csvoutdir, row.names = FALSE)
 
-# load logical vector "inside" to confirm size and reability
+# load logical vector "inside" to confirm size and readability
 # inside <- read.csv(csvoutdir)
 
 # load csv file with all synapses (Princeton synapses)
+# columns: post_x, post_y, post_z (FAFB v783 synapse predictions)
 csvdir <- file.path(repodir, "synapses", "fafb_v783_princeton_synapse_table.csv")
 synapses_xyz <- read.csv(csvdir)
 
@@ -89,11 +95,12 @@ inside <- Reduce(`|`, inside_list)
 csvoutdir <- file.path(repodir, "synapses", "points_inside_persistent_cluster_princeton.csv")
 write.csv(data.frame(inside = inside), csvoutdir, row.names = FALSE)
 
-# load logical vector "inside" to confirm size and reability
+# load logical vector "inside" to confirm size and readability
 # inside <- read.csv(csvoutdir)
 
 ###############################################################
 # debugging: plot and overlay with brain surface
+# Note: plots use the Princeton results (last computed `inside`)
 ###############################################################
 
 # 1) plot mesh and FAFB14 surface
