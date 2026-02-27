@@ -43,7 +43,7 @@ lapply(clus_mesh3d_FAFB14_each, function(m)
 #   move to "synapses" folder in repository, and rename it to 
 #   "synapse_coordinates.csv"
 
-# load csv file with all synapses
+# load csv file with all synapses (Buhman synapses)
 csvdir <- file.path(repodir, "synapses", "synapse_coordinates.csv")
 synapses_xyz <- read.csv(csvdir)
 
@@ -61,7 +61,32 @@ inside_list <- lapply(1:4, function(i) nat::pointsinside(syn_xyz, clus_mesh3d_FA
 inside <- Reduce(`|`, inside_list)
 
 # save logical vector "inside"
-csvoutdir <- file.path(repodir, "synapses", "points_inside_persistent_cluster.csv")
+csvoutdir <- file.path(repodir, "synapses", "points_inside_persistent_cluster_buhman.csv")
+write.csv(data.frame(inside = inside), csvoutdir, row.names = FALSE)
+
+# load logical vector "inside" to confirm size and reability
+# inside <- read.csv(csvoutdir)
+
+# load csv file with all synapses (Princeton synapses)
+csvdir <- file.path(repodir, "synapses", "fafb_v783_princeton_synapse_table.csv")
+synapses_xyz <- read.csv(csvdir)
+
+# get xyz, and transform
+syn_xyz <- synapses_xyz[, c("post_x","post_y","post_z")]
+colnames(syn_xyz) <- c("x", "y", "z")
+syn_xyz <- transform(syn_xyz,
+                     x = as.numeric(x),
+                     y = as.numeric(y),
+                     z = as.numeric(z))
+syn_xyz <- syn_xyz[complete.cases(syn_xyz), ]
+
+# find synapses inside cluster meshes (run for each mesh separately and then get the union)
+#   it uses nat::pointsinside which assumes meshes must be watertight.
+inside_list <- lapply(1:4, function(i) nat::pointsinside(syn_xyz, clus_mesh3d_FAFB14_each[[i]]))
+inside <- Reduce(`|`, inside_list)
+
+# save logical vector "inside"
+csvoutdir <- file.path(repodir, "synapses", "points_inside_persistent_cluster_princeton.csv")
 write.csv(data.frame(inside = inside), csvoutdir, row.names = FALSE)
 
 # load logical vector "inside" to confirm size and reability
